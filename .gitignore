@@ -161,6 +161,7 @@ cython_debug/
 
 logs*/
 data/
+aac_venv/
 
 jz*.yaml
 *.ign.py
