@@ -56,7 +56,7 @@ def teacher_forcing(
     else:
         caps_in = caps_in.permute(1, 0, 2)
 
-    logits = decoder(
+    logits, loss = decoder(
         frame_embs=frame_embs,
         frame_embs_attn_mask=None,
         frame_embs_pad_mask=frame_embs_pad_mask,
@@ -67,4 +67,4 @@ def teacher_forcing(
 
     # permute: (caps_size, bsize, vocab_size) -> (bsize, vocab_size, caps_size)
     logits = logits.permute(1, 2, 0)
-    return logits
+    return logits, loss

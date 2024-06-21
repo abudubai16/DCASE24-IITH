@@ -6,6 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+# Ignore very large files
+.notebooks/similarity_scores/*.npz
+.src/dcase24t6/nn/*.pt
+.screenlog.0
+
 # Distribution / packaging
 .Python
 build/

@@ -20,10 +20,12 @@ from dcase24t6.augmentations.mixup import sample_lambda
 from dcase24t6.datamodules.hdf import Stage
 from dcase24t6.models.aac import AACModel, Batch, TestBatch, TrainBatch, ValBatch
 from dcase24t6.nn.decoders.aac_tfmer import AACTransformerDecoder
+from dcase24t6.nn.decoders.sec_tfmer import Sec_tfmer
 from dcase24t6.nn.decoding.beam import generate
 from dcase24t6.nn.decoding.common import get_forbid_rep_mask_content_words
 from dcase24t6.nn.decoding.forcing import teacher_forcing
 from dcase24t6.nn.decoding.greedy import greedy_search
+from dcase24t6.nn.loss import Similarity_Check
 from dcase24t6.optim.schedulers import CosDecayScheduler
 from dcase24t6.optim.utils import create_params_groups
 from dcase24t6.tokenization.aac_tokenizer import AACTokenizer
@@ -65,6 +67,12 @@ class TransDecoderModel(AACModel):
         self.decoder: AACTransformerDecoder = None  # type: ignore
         self.save_hyperparameters(ignore=["tokenizer"])
 
+        self.sim_check = (
+            Similarity_Check(tokenizer=self.tokenizer, vocab_size=4371)
+            .eval()
+            .to("cuda")
+        )
+
     def is_built(self) -> bool:
         return self.decoder is not None
 
@@ -90,6 +98,9 @@ class TransDecoderModel(AACModel):
             Transpose(1, 2),
             nn.Dropout(p=0.5),
         )
+
+        keyword_enc = Sec_tfmer(self.tokenizer)
+
         decoder = AACTransformerDecoder(
             vocab_size=self.tokenizer.get_vocab_size(),
             pad_id=self.tokenizer.pad_token_id,
@@ -104,6 +115,7 @@ class TransDecoderModel(AACModel):
         )
 
         self.projection = projection
+        self.keyword_enc = keyword_enc
         self.decoder = decoder
         self.register_buffer("forbid_rep_mask", forbid_rep_mask)
         self.forbid_rep_mask: Optional[Tensor]
@@ -143,18 +155,25 @@ class TransDecoderModel(AACModel):
         captions_in = captions_in * lbd + captions_in[indexes] * (1.0 - lbd)
 
         encoded = self.encode_audio(audio, audio_shape)
-        decoded = self.decode_audio(
+        """
+            encoded['frame_embs']: (64, 256, 55)
+            encoded['frame_embs_pad_mask']: (64, 55)
+        """
+
+        encoded, keyword_loss = self.keyword_enc(encoded, batch["keywords"])
+
+        decoded, moe_loss = self.decode_audio(
             encoded,
             captions=captions_in,
             captions_pad_mask=captions_in_pad_mask,
             method="forcing",
         )
-        logits = decoded["logits"]
+        logits = decoded["logits"]  # logits: (64, 4371, 21)
 
         loss = self.train_criterion(logits, captions_out)
         self.log("train/loss", loss, batch_size=bsize, prog_bar=True)
 
-        return loss
+        return loss + moe_loss + keyword_loss
 
     def validation_step(self, batch: ValBatch) -> dict[str, Tensor]:
         audio = batch["frame_embs"]
@@ -177,11 +196,13 @@ class TransDecoderModel(AACModel):
             device=self.device,
         )
 
+        encoded, keyword_loss = self.keyword_enc(encoded, batch["keywords"])
+
         for i in range(max_captions_per_audio):
             captions_in_i = mult_captions_in[:, i]
             captions_out_i = mult_captions_out[:, i]
 
-            decoded_i = self.decode_audio(encoded, captions=captions_in_i)
+            decoded_i, _ = self.decode_audio(encoded, captions=captions_in_i)
             logits_i = decoded_i["logits"]
             losses_i = self.val_criterion(logits_i, captions_out_i)
             losses[:, i] = losses_i
@@ -189,9 +210,9 @@ class TransDecoderModel(AACModel):
         loss = masked_mean(losses, is_valid_caption)
         self.log("val/loss", loss, batch_size=bsize, prog_bar=True)
 
-        decoded = self.decode_audio(encoded, method="generate")
+        decoded, loss = self.decode_audio(encoded, method="generate")
         outputs = {
-            "val/loss": losses,
+            "val/loss": losses + loss + keyword_loss,
         } | decoded
         return outputs
 
@@ -216,11 +237,13 @@ class TransDecoderModel(AACModel):
             device=self.device,
         )
 
+        encoded, keyword_loss = self.keyword_enc(encoded, batch["keywords"])
+
         for i in range(max_captions_per_audio):
             captions_in_i = mult_captions_in[:, i]
             captions_out_i = mult_captions_out[:, i]
 
-            decoded_i = self.decode_audio(encoded, captions=captions_in_i)
+            decoded_i, _ = self.decode_audio(encoded, captions=captions_in_i)
             logits_i = decoded_i["logits"]
             losses_i = self.test_criterion(logits_i, captions_out_i)
             losses[:, i] = losses_i
@@ -228,9 +251,9 @@ class TransDecoderModel(AACModel):
         loss = masked_mean(losses, is_valid_caption)
         self.log("test/loss", loss, batch_size=bsize, prog_bar=True)
 
-        decoded = self.decode_audio(encoded, method="generate")
+        decoded, loss = self.decode_audio(encoded, method="generate")
         outputs = {
-            "test/loss": losses,
+            "test/loss": losses + loss + keyword_loss,
         } | decoded
         return outputs
 
@@ -243,17 +266,25 @@ class TransDecoderModel(AACModel):
         audio_shape = batch["frame_embs_shape"]
         captions = batch.get("captions", None)
         encoded = self.encode_audio(audio, audio_shape)
-        decoded = self.decode_audio(encoded, captions, **method_kwargs)
+        encoded, _ = self.keyword_enc(encoded, batch["keywords"])
+        decoded, _ = self.decode_audio(encoded, captions, **method_kwargs)
         return decoded
 
     def train_criterion(self, logits: Tensor, target: Tensor) -> Tensor:
+        """
+        logits : (64, 4371, 22)
+        target : (64, 22)
+        """
+
+        sim_loss = self.sim_check(logits.transpose(-1, -2), target) * 5
+
         loss = F.cross_entropy(
             logits,
             target,
             ignore_index=self.tokenizer.pad_token_id,
             label_smoothing=self.hparams["label_smoothing"],
         )
-        return loss
+        return loss + sim_loss
 
     def val_criterion(self, logits: Tensor, target: Tensor) -> Tensor:
         losses = F.cross_entropy(
@@ -264,7 +295,7 @@ class TransDecoderModel(AACModel):
         )
         # We apply mean only on second dim to get a tensor of shape (bsize,)
         losses = masked_mean(losses, target != self.tokenizer.pad_token_id, dim=1)
-        return losses
+        return losses + self.sim_check(logits.transpose(-1, -2), target) * 5
 
     def test_criterion(self, logits: Tensor, target: Tensor) -> Tensor:
         return self.val_criterion(logits, target)
@@ -337,7 +368,7 @@ class TransDecoderModel(AACModel):
                     "caps_in_pad_mask": captions_pad_mask,
                 }
                 kwargs = common_args | forcing_args | method_overrides
-                logits = teacher_forcing(**kwargs)
+                logits, loss = teacher_forcing(**kwargs)
                 outs = {"logits": logits}
 
             case "greedy":
@@ -350,7 +381,7 @@ class TransDecoderModel(AACModel):
                     "forbid_rep_mask": self.forbid_rep_mask,
                 }
                 kwargs = common_args | greedy_args | method_overrides
-                logits = greedy_search(**kwargs)
+                logits, loss = greedy_search(**kwargs)
                 outs = {"logits": logits}
 
             case "generate":
@@ -364,7 +395,7 @@ class TransDecoderModel(AACModel):
                     "beam_size": self.hparams["beam_size"],
                 }
                 kwargs = common_args | generate_args | method_overrides
-                outs = generate(**kwargs)
+                outs, loss = generate(**kwargs)
                 outs = outs._asdict()
 
                 # Decode predictions ids to sentences
@@ -393,4 +424,4 @@ class TransDecoderModel(AACModel):
                     f"Unknown argument {method=}. (expected one of {DECODE_METHODS})"
                 )
 
-        return outs
+        return outs, loss

@@ -125,7 +125,7 @@ def generate(
         preds_in_i = preds[:, : i + 1].transpose(0, 1)
         caps_in_attn_mask_i = caps_in_attn_mask[: i + 1, : i + 1]
 
-        full_logits_i = decoder(
+        full_logits_i, loss = decoder(
             frame_embs=frame_embs,
             frame_embs_attn_mask=None,
             frame_embs_pad_mask=frame_embs_pad_mask,
@@ -236,8 +236,11 @@ def generate(
     best_preds_maxlen = best_preds_lens.max() + 1
     best_preds_out = best_preds_out[:, :best_preds_maxlen].contiguous()
 
-    return GenerateOutput(
-        best_preds_out, best_avg_lprobs, global_preds_out, global_avg_lprobs
+    return (
+        GenerateOutput(
+            best_preds_out, best_avg_lprobs, global_preds_out, global_avg_lprobs
+        ),
+        loss,
     )
 
 

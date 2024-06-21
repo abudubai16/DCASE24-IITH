@@ -2,7 +2,7 @@
 
 defaults:
   - emission: online
-  - pre_process: cnext
+  - pre_process: BEATs # cnext
   - path: local
   - hydra: custom
   - _self_

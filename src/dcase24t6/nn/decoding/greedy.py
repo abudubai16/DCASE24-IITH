@@ -81,7 +81,7 @@ def greedy_search(
         preds_in_i = preds[:, : i + 1].transpose(0, 1)
         caps_in_attn_mask_i = caps_in_attn_mask[: i + 1, : i + 1]
 
-        full_logits_i = decoder(
+        full_logits_i, loss = decoder(
             frame_embs=frame_embs,
             frame_embs_attn_mask=None,
             frame_embs_pad_mask=frame_embs_pad_mask,
@@ -129,4 +129,4 @@ def greedy_search(
         global_logits_out = global_logits_out[:, :, :pred_size].contiguous()
 
     # logits shape: (bsize, vocab_size, pred_size)
-    return global_logits_out
+    return global_logits_out, loss

@@ -48,6 +48,10 @@ from dcase24t6.utils.saving import save_to_yaml
 
 pylog = logging.getLogger(__name__)
 
+import torch
+
+torch.set_float32_matmul_precision("high")
+
 
 @hydra.main(
     version_base=None,

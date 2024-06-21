@@ -16,6 +16,7 @@ save_dir: "${hydra:sweep.dir}/${hydra:sweep.subdir}"
 save_name: "${hydra:job.name}-${datetime}"
 seed: 42  # int | null
 verbose: 1  # int (0 = WARNING, 1 = INFO, 2 = DEBUG)
+pre_process: 'cnext'
 
 # --- Train args
 val_ckpt_path: null  # str | null
