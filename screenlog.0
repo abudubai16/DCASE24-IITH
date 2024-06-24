@@ -1,0 +1,153 @@
+[33m[W 2024-06-21 11:09:04.996 ServerApp](B[m A `_jupyter_server_extension_points` function was not found in nbclassic. Instead, a `_jupyter_server_extension_paths` function was found and will be used for now. This function name will be deprecated in future releases of Jupyter Server.
+[32m[I 2024-06-21 11:09:04.997 ServerApp](B[m jupyter_lsp | extension was successfully linked.
+[32m[I 2024-06-21 11:09:04.998 ServerApp](B[m jupyter_server_terminals | extension was successfully linked.
+[32m[I 2024-06-21 11:09:05.000 ServerApp](B[m jupyterlab | extension was successfully linked.
+[32m[I 2024-06-21 11:09:05.002 ServerApp](B[m nbclassic | extension was successfully linked.
+[33m[W 2024-06-21 11:09:05.094 ServerApp](B[m A `_jupyter_server_extension_points` function was not found in jupyter_nbextensions_configurator. Instead, a `_jupyter_server_extension_paths` function was found and will be used for now. This function name will be deprecated in future releases of Jupyter Server.
+[32m[I 2024-06-21 11:09:05.094 ServerApp](B[m jupyter_nbextensions_configurator | extension was found and enabled by notebook_shim. Consider moving the extension to Jupyter Server's extension paths.
+[32m[I 2024-06-21 11:09:05.094 ServerApp](B[m jupyter_nbextensions_configurator | extension was successfully linked.
+[32m[I 2024-06-21 11:09:05.094 ServerApp](B[m notebook_shim | extension was successfully linked.
+[32m[I 2024-06-21 11:09:05.102 ServerApp](B[m notebook_shim | extension was successfully loaded.
+[32m[I 2024-06-21 11:09:05.103 ServerApp](B[m jupyter_lsp | extension was successfully loaded.
+[32m[I 2024-06-21 11:09:05.104 ServerApp](B[m [jupyter_nbextensions_configurator] enabled 0.6.3
+[32m[I 2024-06-21 11:09:05.104 ServerApp](B[m jupyter_nbextensions_configurator | extension was successfully loaded.
+[32m[I 2024-06-21 11:09:05.104 ServerApp](B[m jupyter_server_terminals | extension was successfully loaded.
+[32m[I 2024-06-21 11:09:05.105 LabApp](B[m JupyterLab extension loaded from /home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyterlab
+[32m[I 2024-06-21 11:09:05.105 LabApp](B[m JupyterLab application directory is /home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/share/jupyter/lab
+[32m[I 2024-06-21 11:09:05.105 LabApp](B[m Extension Manager is 'pypi'.
+[32m[I 2024-06-21 11:09:05.106 ServerApp](B[m jupyterlab | extension was successfully loaded.
+
+  _   _          _      _
+ | | | |_ __  __| |__ _| |_ ___
+ | |_| | '_ \/ _` / _` |  _/ -_)
+  \___/| .__/\__,_\__,_|\__\___|
+       |_|
+
+Read the migration plan to Notebook 7 to learn about the new features and the actions to take if you are using extensions.
+
+https://jupyter-notebook.readthedocs.io/en/latest/migrate_to_notebook7.html
+
+Please note that updating to Notebook 7 might break some of your extensions.
+
+[32m[I 2024-06-21 11:09:05.107 ServerApp](B[m nbclassic | extension was successfully loaded.
+[32m[I 2024-06-21 11:09:05.107 ServerApp](B[m Serving notebooks from local directory: /home/akhil/models/DCASE24/dcase2024-task6-baseline
+[32m[I 2024-06-21 11:09:05.107 ServerApp](B[m Jupyter Server 2.14.0 is running at:
+[32m[I 2024-06-21 11:09:05.108 ServerApp](B[m http://localhost:8888/lab?token=87dd79a377fa12bdddf78cbc5010bb95a223c20965a00289
+[32m[I 2024-06-21 11:09:05.108 ServerApp](B[m     http://127.0.0.1:8888/lab?token=87dd79a377fa12bdddf78cbc5010bb95a223c20965a00289
+[32m[I 2024-06-21 11:09:05.108 ServerApp](B[m Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[35m[C 2024-06-21 11:09:05.109 ServerApp](B[m
+
+    To access the server, open this file in a browser:
+        file:///home/akhil/.local/share/jupyter/runtime/jpserver-1448742-open.html
+    Or copy and paste one of these URLs:
+        http://localhost:8888/lab?token=87dd79a377fa12bdddf78cbc5010bb95a223c20965a00289
+        http://127.0.0.1:8888/lab?token=87dd79a377fa12bdddf78cbc5010bb95a223c20965a00289
+[32m[I 2024-06-21 11:09:05.116 ServerApp](B[m Skipped non-installed server(s): bash-language-server, dockerfile-language-server-nodejs, javascript-typescript-langserver, jedi-language-server, julia-language-server, pyright, python-language-server, python-lsp-server, r-languageserver, sql-language-server, texlab, typescript-language-server, unified-language-server, vscode-css-languageserver-bin, vscode-html-languageserver-bin, vscode-json-languageserver-bin, yaml-language-server
+[33m[W 2024-06-21 11:09:11.182 ServerApp](B[m 404 GET /api/contents/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb?content=0&1718948351180 (587097e4206d40cf8d30cd5c6b23099c@127.0.0.1) 0.90ms referer=http://localhost:8888/lab/tree/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb
+[33m[W 2024-06-21 11:09:11.182 ServerApp](B[m 404 GET /api/contents/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb?content=0&1718948351180 (127.0.0.1): No such file or directory: models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb
+[32m[I 2024-06-21 11:09:11.186 ServerApp](B[m Uploading file to /models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb
+[31m[E 2024-06-21 11:09:11.226 ServerApp](B[m Error while saving file: models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb [Errno 2] No such file or directory: '/home/akhil/models/DCASE24/dcase2024-task6-baseline/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb'
+    Traceback (most recent call last):
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/contents/filemanager.py", line 960, in save
+        await self._save_notebook(os_path, nb, capture_validation_error=validation_error)
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/contents/fileio.py", line 487, in _save_notebook
+        with self.atomic_writing(os_path, encoding="utf-8") as f:
+      File "/usr/lib/python3.11/contextlib.py", line 137, in __enter__
+        return next(self.gen)
+               ^^^^^^^^^^^^^^
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/contents/fileio.py", line 220, in atomic_writing
+        with atomic_writing(os_path, *args, **kwargs) as f:
+      File "/usr/lib/python3.11/contextlib.py", line 137, in __enter__
+        return next(self.gen)
+               ^^^^^^^^^^^^^^
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/contents/fileio.py", line 112, in atomic_writing
+        fileobj = open(path, "w", encoding=encoding, **kwargs)  # noqa: SIM115
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    FileNotFoundError: [Errno 2] No such file or directory: '/home/akhil/models/DCASE24/dcase2024-task6-baseline/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb'
+[33m[W 2024-06-21 11:09:11.228 ServerApp](B[m 500 PUT /api/contents/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb?1718948351184 (127.0.0.1): Unexpected error while saving file: models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb [Errno 2] No such file or directory: '/home/akhil/models/DCASE24/dcase2024-task6-baseline/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb'
+[33m[W 2024-06-21 11:09:11.228 ServerApp](B[m wrote error: "Unexpected error while saving file: models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb [Errno 2] No such file or directory: '/home/akhil/models/DCASE24/dcase2024-task6-baseline/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb'"
+    Traceback (most recent call last):
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/contents/filemanager.py", line 960, in save
+        await self._save_notebook(os_path, nb, capture_validation_error=validation_error)
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/contents/fileio.py", line 487, in _save_notebook
+        with self.atomic_writing(os_path, encoding="utf-8") as f:
+      File "/usr/lib/python3.11/contextlib.py", line 137, in __enter__
+        return next(self.gen)
+               ^^^^^^^^^^^^^^
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/contents/fileio.py", line 220, in atomic_writing
+        with atomic_writing(os_path, *args, **kwargs) as f:
+      File "/usr/lib/python3.11/contextlib.py", line 137, in __enter__
+        return next(self.gen)
+               ^^^^^^^^^^^^^^
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/contents/fileio.py", line 112, in atomic_writing
+        fileobj = open(path, "w", encoding=encoding, **kwargs)  # noqa: SIM115
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    FileNotFoundError: [Errno 2] No such file or directory: '/home/akhil/models/DCASE24/dcase2024-task6-baseline/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb'
+
+    The above exception was the direct cause of the following exception:
+
+    Traceback (most recent call last):
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/tornado/web.py", line 1790, in _execute
+        result = await result
+                 ^^^^^^^^^^^^
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/auth/decorator.py", line 73, in inner
+        return await out
+               ^^^^^^^^^
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/contents/handlers.py", line 321, in put
+        await self._upload(model, path)
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/contents/handlers.py", line 224, in _upload
+        model = await ensure_async(self.contents_manager.new(model, path))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_core/utils/__init__.py", line 198, in ensure_async
+        result = await obj
+                 ^^^^^^^^^
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/contents/manager.py", line 1019, in new
+        model = await self.save(model, path)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/contents/largefilemanager.py", line 133, in save
+        return await super().save(model, path)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/contents/filemanager.py", line 975, in save
+        raise web.HTTPError(500, f"Unexpected error while saving file: {path} {e}") from e
+    tornado.web.HTTPError: HTTP 500: Internal Server Error (Unexpected error while saving file: models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb [Errno 2] No such file or directory: '/home/akhil/models/DCASE24/dcase2024-task6-baseline/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb')
+[31m[E 2024-06-21 11:09:11.230 ServerApp](B[m {
+      "Host": "localhost:8888",
+      "Accept": "*/*",
+      "Referer": "http://localhost:8888/lab/tree/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb",
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
+    }
+[31m[E 2024-06-21 11:09:11.230 ServerApp](B[m 500 PUT /api/contents/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb?1718948351184 (587097e4206d40cf8d30cd5c6b23099c@127.0.0.1) 44.47ms referer=http://localhost:8888/lab/tree/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb
+[33m[W 2024-06-21 11:09:12.008 ServerApp](B[m 404 GET /api/kernels/a8fb7228-d379-48ce-b76a-f4348cbe00e6?1718948352001 (127.0.0.1): Kernel does not exist: a8fb7228-d379-48ce-b76a-f4348cbe00e6
+[33m[W 2024-06-21 11:09:12.008 ServerApp](B[m wrote error: 'Kernel does not exist: a8fb7228-d379-48ce-b76a-f4348cbe00e6'
+    Traceback (most recent call last):
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/tornado/web.py", line 1790, in _execute
+        result = await result
+                 ^^^^^^^^^^^^
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/auth/decorator.py", line 73, in inner
+        return await out
+               ^^^^^^^^^
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/kernels/handlers.py", line 75, in get
+        model = await ensure_async(km.kernel_model(kernel_id))
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/kernels/kernelmanager.py", line 501, in kernel_model
+        self._check_kernel_id(kernel_id)
+      File "/home/akhil/models/DCASE24/dcase2024-task6-baseline/aac_venv/lib/python3.11/site-packages/jupyter_server/services/kernels/kernelmanager.py", line 532, in _check_kernel_id
+        raise web.HTTPError(404, "Kernel does not exist: %s" % kernel_id)
+    tornado.web.HTTPError: HTTP 404: Not Found (Kernel does not exist: a8fb7228-d379-48ce-b76a-f4348cbe00e6)
+[33m[W 2024-06-21 11:09:12.019 ServerApp](B[m 404 GET /api/kernels/a8fb7228-d379-48ce-b76a-f4348cbe00e6?1718948352001 (587097e4206d40cf8d30cd5c6b23099c@127.0.0.1) 12.40ms referer=http://localhost:8888/lab/tree/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb
+[33m[W 2024-06-21 11:09:13.524 ServerApp](B[m 404 GET /api/kernels/a8fb7228-d379-48ce-b76a-f4348cbe00e6/channels?session_id=11e35fba-50ed-4592-96ce-d8debba7116d (127.0.0.1): Kernel does not exist: a8fb7228-d379-48ce-b76a-f4348cbe00e6
+[33m[W 2024-06-21 11:09:13.535 ServerApp](B[m 404 GET /api/kernels/a8fb7228-d379-48ce-b76a-f4348cbe00e6/channels?session_id=11e35fba-50ed-4592-96ce-d8debba7116d (587097e4206d40cf8d30cd5c6b23099c@127.0.0.1) 12.97ms referer=None
+[33m[W 2024-06-21 11:09:15.035 LabApp](B[m Could not determine jupyterlab build status without nodejs
+[33m[W 2024-06-21 11:09:15.207 ServerApp](B[m 404 GET /api/contents/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb?content=0&1718948355205 (587097e4206d40cf8d30cd5c6b23099c@127.0.0.1) 0.67ms referer=http://localhost:8888/lab/tree/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb
+[33m[W 2024-06-21 11:09:15.207 ServerApp](B[m 404 GET /api/contents/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb?content=0&1718948355205 (127.0.0.1): No such file or directory: models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb
+[33m[W 2024-06-21 11:09:15.772 ServerApp](B[m 404 GET /api/contents/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb?content=0&1718948355764 (587097e4206d40cf8d30cd5c6b23099c@127.0.0.1) 3.01ms referer=http://localhost:8888/lab/tree/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb
+[33m[W 2024-06-21 11:09:15.772 ServerApp](B[m 404 GET /api/contents/models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb?content=0&1718948355764 (127.0.0.1): No such file or directory: models/DCASE24/dcase2024-task6-baseline/notebooks/crossAttentionVisualization.ipynb
+^C[32m[I 2024-06-21 11:09:26.165 ServerApp](B[m interrupted
+[32m[I 2024-06-21 11:09:26.165 ServerApp](B[m Serving notebooks from local directory: /home/akhil/models/DCASE24/dcase2024-task6-baseline
+    0 active kernels
+    Jupyter Server 2.14.0 is running at:
+    http://localhost:8888/lab?token=87dd79a377fa12bdddf78cbc5010bb95a223c20965a00289
+        http://127.0.0.1:8888/lab?token=87dd79a377fa12bdddf78cbc5010bb95a223c20965a00289
+Shut down this Jupyter server (y/[n])? y
+[35m[C 2024-06-21 11:09:27.148 ServerApp](B[m Shutdown confirmed
+[32m[I 2024-06-21 11:09:27.149 ServerApp](B[m Shutting down 6 extensions

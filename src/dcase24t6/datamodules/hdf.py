@@ -166,11 +166,15 @@ class HDFDatamodule(LightningDataModule):
             item["mult_captions"] = captions
             item["mult_references"] = refs
 
-        keywords = item["keywords"]
-        keywords = [
-            torch.tensor(self.tokenizer.encode(word).ids[1]) for word in keywords
-        ]
-        item["keywords"] = torch.stack(random.choices(keywords, k=1))
+        try:
+            keywords = item["keywords"]
+            keywords = [
+                torch.tensor(self.tokenizer.encode(word).ids[1]) for word in keywords
+            ]
+            item["keywords"] = torch.stack(random.choices(keywords, k=1))
+        except Exception as e:
+            print(e)
+            pass
 
         if keys is not None:
             item = {k: item[k] for k in keys}

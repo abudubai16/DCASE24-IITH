@@ -237,7 +237,7 @@ class TransDecoderModel(AACModel):
             device=self.device,
         )
 
-        encoded, keyword_loss = self.keyword_enc(encoded, batch["keywords"])
+        encoded, keyword_loss = self.keyword_enc(encoded)
 
         for i in range(max_captions_per_audio):
             captions_in_i = mult_captions_in[:, i]

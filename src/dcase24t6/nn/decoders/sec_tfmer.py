@@ -49,6 +49,8 @@ class Sec_tfmer(nn.Module):
         self.classifier = nn.Linear(d_model, self.vocab_size)
         self.projection = nn.Linear(self.d_embs, d_model)
 
+        self.fin_projec = nn.Linear(512, 256)
+
     def init_embedding_layer(self):
         save_location = "/home/akhil/models/DCASE24/dcase2024-task6-baseline/src/dcase24t6/nn/sec_tfm_embeddings.pt"
 
@@ -105,8 +107,11 @@ class Sec_tfmer(nn.Module):
         else:
             loss = 0
 
-        # embs['frame_embs'] = embs['frame_embs'] + logits.unsqueeze(2)
-        embs["frame_embs"] = embs["frame_embs"] * logits.unsqueeze(2)
+        logits = torch.stack([logits] * embs["frame_embs"].shape[2], dim=2)
+        embs["frame_embs"] = torch.cat([embs["frame_embs"], logits], dim=1)
+        embs["frame_embs"] = self.fin_projec(
+            embs["frame_embs"].transpose(-1, -2)
+        ).transpose(-1, -2)
 
         return embs, loss * self.loss_scale
 
@@ -114,6 +119,9 @@ class Sec_tfmer(nn.Module):
 # Local testing
 if __name__ == "__main__":
     a = torch.rand(64, 256, 93)
-    b = torch.rand(64, 256, 1)
-    print(torch.cat([a, b], dim=2))
+    b = torch.rand(64, 256)
+    b = torch.stack([b] * a.shape[2], dim=2)
+
+    print(torch.cat([a, b], dim=1).shape)
+
     pass
