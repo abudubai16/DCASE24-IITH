@@ -69,27 +69,29 @@ def generate_similarity_matrix(
 
 
 class Similarity_Check(nn.Module):
-    def __init__(self, tokenizer: AACTokenizer, vocab_size: int | None = None):
+    def __init__(self, tokenizer: AACTokenizer, vocab_size: int):
         super().__init__()
         self.tokenizer = tokenizer
-
-        if "sim_mat.pt" not in os.listdir(
+        self.cutoff = 0.9
+        self.file_dir = (
             "/home/akhil/models/DCASE24/dcase2024-task6-baseline/src/dcase24t6/nn"
-        ):
+        )
+        self.file_name = f"sim_mat_{str(100*self.cutoff)}.pt"
+        self.file_path = f"{self.file_dir}/{self.file_name}"
+
+        if self.file_name not in os.listdir(self.file_dir):
             print("Generating Cosine Similarity Matrix: \n")
             self.sim_matrix: torch.Tensor = generate_similarity_matrix(
                 tokenizer=tokenizer, vocab_size=vocab_size, cutoff=0.5
             )
             torch.save(
                 self.sim_matrix,
-                "/home/akhil/models/DCASE24/dcase2024-task6-baseline/src/dcase24t6/nn/sim_mat.pt",
+                self.file_path,
             )
             print("Cosine Similarity Matrix Computed")
         else:
             print("Loading similarity matrix:\n")
-            self.sim_matrix = torch.load(
-                "/home/akhil/models/DCASE24/dcase2024-task6-baseline/src/dcase24t6/nn/sim_mat.pt"
-            )
+            self.sim_matrix = torch.load(self.file_path)
 
     def forward(self, logits: torch.Tensor, targets: torch.Tensor):
 
