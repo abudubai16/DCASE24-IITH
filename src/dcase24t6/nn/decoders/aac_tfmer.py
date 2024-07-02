@@ -50,7 +50,10 @@ class AACTransformerDecoder(nn.TransformerDecoder):
             batch_first=False,
             norm_first=False,
         )
-        # 256 4371
+        """
+            d_model: 256
+            vocab_size: 4371
+        """
         # classifier = nn.Linear(d_model, vocab_size)
         classifier = MultipleProjections(d_model, vocab_size, 4).to("cuda")
 
@@ -116,7 +119,7 @@ class AACTransformerDecoder(nn.TransformerDecoder):
         caps_in = caps_in * math.sqrt(d_model)
         caps_in = self.pos_encoding(caps_in)
 
-        tok_embs_outs = super().forward(
+        tok_embs_outs, loss = super().forward(
             memory=frame_embs,
             memory_key_padding_mask=frame_embs_pad_mask,
             memory_mask=frame_embs_attn_mask,

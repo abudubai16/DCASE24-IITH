@@ -174,7 +174,7 @@ class HDFDatamodule(LightningDataModule):
             item["keywords"] = torch.stack(random.choices(keywords, k=1))
 
         if keys is not None:
-            item = {k: item[k] for k in keys}
+            item = {k: item[k] for k in keys if k in item.keys()}
 
         return item
 

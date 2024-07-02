@@ -266,7 +266,10 @@ class TransDecoderModel(AACModel):
         audio_shape = batch["frame_embs_shape"]
         captions = batch.get("captions", None)
         encoded = self.encode_audio(audio, audio_shape)
-        encoded, _ = self.keyword_enc(encoded, batch["keywords"])
+        if "keywords" in batch.keys():
+            encoded, _ = self.keyword_enc(encoded, batch["keywords"])
+        else:
+            encoded, _ = self.keyword_enc(encoded)
         decoded, _ = self.decode_audio(encoded, captions, **method_kwargs)
         return decoded
 
