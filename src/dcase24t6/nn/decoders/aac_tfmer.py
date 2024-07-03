@@ -119,7 +119,7 @@ class AACTransformerDecoder(nn.TransformerDecoder):
         caps_in = caps_in * math.sqrt(d_model)
         caps_in = self.pos_encoding(caps_in)
 
-        tok_embs_outs, loss = super().forward(
+        tok_embs_outs = super().forward(
             memory=frame_embs,
             memory_key_padding_mask=frame_embs_pad_mask,
             memory_mask=frame_embs_attn_mask,
