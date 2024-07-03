@@ -9,7 +9,7 @@ import torch
 from torch import Tensor, nn
 
 from dcase24t6.nn.functional import get_activation_fn
-from dcase24t6.nn.modules import MultipleProjections, PositionalEncoding
+from dcase24t6.nn.modules import PositionalEncoding
 
 pylog = logging.getLogger(__name__)
 
@@ -54,8 +54,7 @@ class AACTransformerDecoder(nn.TransformerDecoder):
             d_model: 256
             vocab_size: 4371
         """
-        # classifier = nn.Linear(d_model, vocab_size)
-        classifier = MultipleProjections(d_model, vocab_size, 4).to("cuda")
+        classifier = nn.Linear(d_model, vocab_size)
 
         super().__init__(decoder_layer, num_decoder_layers)
 
@@ -128,7 +127,8 @@ class AACTransformerDecoder(nn.TransformerDecoder):
             tgt_mask=caps_in_attn_mask,
         )
         # 29, 64, 256
-        tok_logits_out, loss = self.classifier(tok_embs_outs)
+        tok_logits_out = self.classifier(tok_embs_outs)
+        loss = 0
 
         # breakpoint()
         return tok_logits_out, loss
