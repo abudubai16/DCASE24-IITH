@@ -390,6 +390,7 @@ class TransDecoderModel(AACModel):
         method: str = "auto",
         **method_overrides,
     ) -> dict[str, Tensor]:
+        # audio_encoding['frame_embs'].shape = [64, 256, 93]
         if method == "auto":
             if captions is None:
                 method = "generate"
