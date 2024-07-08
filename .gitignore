@@ -10,6 +10,8 @@ __pycache__/
 .notebooks/similarity_scores/*.npz
 .src/dcase24t6/nn/*.pt
 .screenlog.0
+.notebooks
+.notebooks/*
 
 # Distribution / packaging
 .Python
