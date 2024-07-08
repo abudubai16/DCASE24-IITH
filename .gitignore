@@ -12,6 +12,8 @@ __pycache__/
 .screenlog.0
 .notebooks
 .notebooks/*
+notebooks
+notebooks/*
 
 # Distribution / packaging
 .Python
