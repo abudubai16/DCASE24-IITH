@@ -189,10 +189,11 @@ class TransDecoderModel(AACModel):
         )
         captions_in = self.input_emb_layer(captions_in)
         captions_in = captions_in * lbd + captions_in[indexes] * (1.0 - lbd)
-
+        """
         audio = self.conv(audio)
         audio, _ = self.conformer(audio.transpose(-1, -2), audio_shape[:, -1])
         audio = audio.transpose(-1, -2)
+        """
         # Audio Shape: (64, 768, 93)
 
         encoded = self.encode_audio(audio, audio_shape)
@@ -224,11 +225,11 @@ class TransDecoderModel(AACModel):
         mult_captions_out = mult_captions[:, :, 1:]
         is_valid_caption = (mult_captions != self.tokenizer.pad_token_id).any(dim=2)
         del mult_captions
-
+        """
         audio = self.conv(audio)
         audio, _ = self.conformer(audio.transpose(-1, -2), audio_shape[:, -1])
         audio = audio.transpose(-1, -2)
-
+        """
         encoded = self.encode_audio(audio, audio_shape)
         losses = torch.empty(
             (
@@ -269,11 +270,11 @@ class TransDecoderModel(AACModel):
         mult_captions_out = mult_captions[:, :, 1:]
         is_valid_caption = (mult_captions != self.tokenizer.pad_token_id).any(dim=2)
         del mult_captions
-
+        """
         audio = self.conv(audio)
         audio, _ = self.conformer(audio.transpose(-1, -2), audio_shape[:, -1])
         audio = audio.transpose(-1, -2)
-
+        """
         encoded = self.encode_audio(audio, audio_shape)
         losses = torch.empty(
             (
