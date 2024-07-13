@@ -4,10 +4,12 @@
 from typing import Any, Optional, TypedDict
 
 import torch
+from info_nce import info_nce
 from lightning.pytorch.utilities.types import OptimizerLRScheduler
 from torch import Tensor, nn
 from torch.nn import functional as F
 from torch.optim import AdamW
+from torchaudio.models.conformer import Conformer
 from torchoutil import (
     lengths_to_pad_mask,
     masked_mean,
@@ -15,6 +17,7 @@ from torchoutil import (
     tensor_to_pad_mask,
 )
 from torchoutil.nn import Transpose
+from transformers import AutoModel, AutoTokenizer
 
 from dcase24t6.augmentations.mixup import sample_lambda
 from dcase24t6.datamodules.hdf import Stage
@@ -24,6 +27,7 @@ from dcase24t6.nn.decoding.beam import generate
 from dcase24t6.nn.decoding.common import get_forbid_rep_mask_content_words
 from dcase24t6.nn.decoding.forcing import teacher_forcing
 from dcase24t6.nn.decoding.greedy import greedy_search
+from dcase24t6.nn.loss import mean_pooling
 from dcase24t6.optim.schedulers import CosDecayScheduler
 from dcase24t6.optim.utils import create_params_groups
 from dcase24t6.tokenization.aac_tokenizer import AACTokenizer
@@ -104,8 +108,37 @@ class TransDecoderModel(AACModel):
             verbose=self.hparams["verbose"],
         )
 
+        conv = nn.Conv1d(768, 768, kernel_size=5, padding=2)
+
+        sentence_tokenizer = AutoTokenizer.from_pretrained(
+            "sentence-transformers/all-MiniLM-L6-v2"
+        )
+        model = (
+            AutoModel.from_pretrained("sentence-transformers/all-MiniLM-L6-v2")
+            .to("cuda")
+            .eval()
+        )
+        for param in model.parameters():
+            param.requires_grad = False
+
+        linear = nn.Linear(384, 256)
+        conformer = Conformer(
+            input_dim=768,
+            num_heads=4,
+            ffn_dim=2 * 768,
+            num_layers=4,
+            depthwise_conv_kernel_size=31,
+        )
+
+        self.sentence_tokenizer = sentence_tokenizer
+        self.model = model
+
+        self.linear = linear
+        self.conformer = conformer
+        self.conv = conv
         self.projection = projection
         self.decoder = decoder
+
         self.register_buffer("forbid_rep_mask", forbid_rep_mask)
         self.forbid_rep_mask: Optional[Tensor]
 
@@ -125,8 +158,22 @@ class TransDecoderModel(AACModel):
 
         return [optimizer], [scheduler]
 
+    def get_caption_embed(self, captions) -> Tensor:
+        captions = [self.tokenizer.decode(list(caption)) for caption in captions]
+        tokenized_caps = self.sentence_tokenizer(
+            captions, padding=True, truncation=True, return_tensors="pt"
+        ).to("cuda")
+
+        embs = self.model(
+            **tokenized_caps,
+        )
+        sentences_embed = mean_pooling(embs, tokenized_caps["attention_mask"])
+        sentences_embed = self.linear(sentences_embed)
+
+        return sentences_embed
+
     def training_step(self, batch: TrainBatch) -> Tensor:
-        audio = batch["frame_embs"]
+        audio = batch["frame_embs"]  # [64, 768, 93]
         audio_shape = batch["frame_embs_shape"]
         captions = batch["captions"]
 
@@ -142,11 +189,17 @@ class TransDecoderModel(AACModel):
         )
         captions_in = self.input_emb_layer(captions_in)
         captions_in = captions_in * lbd + captions_in[indexes] * (1.0 - lbd)
+        """
+        audio = self.conv(audio)
+        audio, _ = self.conformer(audio.transpose(-1, -2), audio_shape[:, -1])
+        audio = audio.transpose(-1, -2)
+        """
+        # Audio Shape: (64, 768, 93)
 
         encoded = self.encode_audio(audio, audio_shape)
         """
-            encoded['frame_embs']: (64, 256, 55)
-            encoded['frame_embs_pad_mask']: (64, 55)
+            encoded['frame_embs']: [64, 256, 93]
+            encoded['frame_embs_pad_mask']: (64, 93)
         """
 
         decoded, _ = self.decode_audio(
@@ -157,13 +210,13 @@ class TransDecoderModel(AACModel):
         )
         logits = decoded["logits"]  # logits: (64, 4371, 21)
 
-        loss = self.train_criterion(logits, captions_out)
+        loss = self.train_criterion(logits, captions_out, encoded["frame_embs"])
         self.log("train/loss", loss, batch_size=bsize, prog_bar=True)
 
         return loss
 
     def validation_step(self, batch: ValBatch) -> dict[str, Tensor]:
-        audio = batch["frame_embs"]
+        audio = batch["frame_embs"]  # [64, 768, 93]
         audio_shape = batch["frame_embs_shape"]
         mult_captions = batch["mult_captions"]
 
@@ -172,7 +225,11 @@ class TransDecoderModel(AACModel):
         mult_captions_out = mult_captions[:, :, 1:]
         is_valid_caption = (mult_captions != self.tokenizer.pad_token_id).any(dim=2)
         del mult_captions
-
+        """
+        audio = self.conv(audio)
+        audio, _ = self.conformer(audio.transpose(-1, -2), audio_shape[:, -1])
+        audio = audio.transpose(-1, -2)
+        """
         encoded = self.encode_audio(audio, audio_shape)
         losses = torch.empty(
             (
@@ -189,7 +246,9 @@ class TransDecoderModel(AACModel):
 
             decoded_i, _ = self.decode_audio(encoded, captions=captions_in_i)
             logits_i = decoded_i["logits"]
-            losses_i = self.val_criterion(logits_i, captions_out_i)
+            losses_i = self.val_criterion(
+                logits_i, captions_out_i, encoded["frame_embs"]
+            )
             losses[:, i] = losses_i
 
         loss = masked_mean(losses, is_valid_caption)
@@ -211,7 +270,11 @@ class TransDecoderModel(AACModel):
         mult_captions_out = mult_captions[:, :, 1:]
         is_valid_caption = (mult_captions != self.tokenizer.pad_token_id).any(dim=2)
         del mult_captions
-
+        """
+        audio = self.conv(audio)
+        audio, _ = self.conformer(audio.transpose(-1, -2), audio_shape[:, -1])
+        audio = audio.transpose(-1, -2)
+        """
         encoded = self.encode_audio(audio, audio_shape)
         losses = torch.empty(
             (
@@ -228,7 +291,9 @@ class TransDecoderModel(AACModel):
 
             decoded_i, _ = self.decode_audio(encoded, captions=captions_in_i)
             logits_i = decoded_i["logits"]
-            losses_i = self.test_criterion(logits_i, captions_out_i)
+            losses_i = self.test_criterion(
+                logits_i, captions_out_i, encoded["frame_embs"]
+            )
             losses[:, i] = losses_i
 
         loss = masked_mean(losses, is_valid_caption)
@@ -252,11 +317,16 @@ class TransDecoderModel(AACModel):
         decoded, _ = self.decode_audio(encoded, captions, **method_kwargs)
         return decoded
 
-    def train_criterion(self, logits: Tensor, target: Tensor) -> Tensor:
+    def train_criterion(
+        self, logits: Tensor, target: Tensor, encoded: Tensor
+    ) -> Tensor:
         """
-        logits : (64, 4371, 22)
-        target : (64, 22)
+        logits : (64, 4371, 21)
+        target : (64, 21)
         """
+        sentence_embed = self.get_caption_embed(target)  # 64, 256
+        audio_embed = encoded.max(dim=2)[0] + encoded.mean(dim=2)  # 64, 256
+        info_loss = info_nce(sentence_embed, audio_embed)
 
         loss = F.cross_entropy(
             logits,
@@ -264,9 +334,13 @@ class TransDecoderModel(AACModel):
             ignore_index=self.tokenizer.pad_token_id,
             label_smoothing=self.hparams["label_smoothing"],
         )
-        return loss
+        return loss + info_loss
 
-    def val_criterion(self, logits: Tensor, target: Tensor) -> Tensor:
+    def val_criterion(self, logits: Tensor, target: Tensor, encoded: Tensor) -> Tensor:
+        sentence_embed = self.get_caption_embed(target)  # 64, 256
+        audio_embed = encoded.max(dim=2)[0] + encoded.mean(dim=2)  # 64, 256
+        info_loss = info_nce(sentence_embed, audio_embed)
+
         losses = F.cross_entropy(
             logits,
             target,
@@ -275,10 +349,10 @@ class TransDecoderModel(AACModel):
         )
         # We apply mean only on second dim to get a tensor of shape (bsize,)
         losses = masked_mean(losses, target != self.tokenizer.pad_token_id, dim=1)
-        return losses
+        return losses + info_loss
 
-    def test_criterion(self, logits: Tensor, target: Tensor) -> Tensor:
-        return self.val_criterion(logits, target)
+    def test_criterion(self, logits: Tensor, target: Tensor, encoded: Tensor) -> Tensor:
+        return self.val_criterion(logits, target, encoded)
 
     def input_emb_layer(self, ids: Tensor) -> Tensor:
         return self.decoder.emb_layer(ids)
@@ -330,6 +404,7 @@ class TransDecoderModel(AACModel):
         method: str = "auto",
         **method_overrides,
     ) -> dict[str, Tensor]:
+        # audio_encoding['frame_embs'].shape = [64, 256, 93]
         if method == "auto":
             if captions is None:
                 method = "generate"

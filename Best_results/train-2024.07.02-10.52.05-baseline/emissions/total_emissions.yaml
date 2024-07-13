@@ -1,0 +1,31 @@
+timestamp: '2024-07-02T13:23:35'
+project_name: dcase24t6
+run_id: 9c157af0-c928-47f6-9439-372c14fc91c2
+duration: 9085.803414821625
+emissions: 0.00085308564773877
+emissions_rate: 9.389213709929607e-08
+cpu_power: 42.5
+gpu_power: 88.01334023875197
+ram_power: 11.674541473388672
+cpu_energy: 0.10726298644161888
+gpu_energy: 0.2221311243714239
+ram_energy: 0.02946461251901191
+energy_consumed: 0.3588587233320547
+country_name: Canada
+country_iso_code: CAN
+region: quebec
+cloud_provider: ''
+cloud_region: ''
+os: Linux-5.15.0-113-generic-x86_64-with-glibc2.31
+python_version: 3.11.9
+codecarbon_version: 2.3.4
+cpu_count: 12
+cpu_model: 12th Gen Intel(R) Core(TM) i5-12400
+gpu_count: 1
+gpu_model: 1 x NVIDIA GeForce RTX 3060
+longitude: -71.2
+latitude: 46.8
+ram_total_size: 31.132110595703125
+tracking_mode: machine
+on_cloud: N
+pue: 1.0

@@ -1,0 +1,61 @@
+in_features: 768
+d_model: 256
+label_smoothing: 0.2
+mixup_alpha: 0.4
+min_pred_size: 3
+max_pred_size: 20
+beam_size: 3
+custom_weight_decay: true
+lr: 0.0005
+betas:
+- 0.9
+- 0.999
+eps: 1.0e-08
+weight_decay: 2
+sched_num_steps: 400
+verbose: 1
+root: !!python/object/apply:pathlib.PosixPath
+- data
+train_hdfs:
+- clotho_dev_cnext.hdf
+val_hdfs:
+- clotho_val_cnext.hdf
+test_hdfs:
+- clotho_eval_cnext.hdf
+predict_hdfs:
+- clotho_dcase_aac_analysis_cnext.hdf
+- clotho_dcase_aac_test_cnext.hdf
+train_batch_keys:
+- frame_embs
+- frame_embs_shape
+- captions
+- keywords
+val_batch_keys:
+- frame_embs
+- frame_embs_shape
+- dataset
+- subset
+- fname
+- mult_captions
+- mult_references
+- keywords
+test_batch_keys:
+- frame_embs
+- frame_embs_shape
+- dataset
+- subset
+- fname
+- mult_captions
+- mult_references
+- keywords
+predict_batch_keys:
+- frame_embs
+- frame_embs_shape
+- dataset
+- subset
+- fname
+- keywords
+batch_size: 64
+num_workers: 12
+pin_memory: true
+train_drop_last: false
